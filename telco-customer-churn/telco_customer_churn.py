@@ -36,6 +36,10 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
+# ==================================================
+# 1. Exploratory Data Analysis
+# ==================================================
+
 df_ = pd.read_csv("data/Telco-Customer-Churn.csv")
 df = df_.copy()
 
@@ -61,7 +65,7 @@ df.columns = [col.upper() for col in df.columns]
 
 df["CHURN"] = df["CHURN"].map({"Yes": 1, "No": 0})
 
-# Adım 1: Numerik ve kategorik değişkenleri yakalayınız.
+# 1. Exploratory Data Analysis
 
 def grab_col_names(dataframe, cat_th=10, car_th=20):
     """
@@ -114,15 +118,13 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
 
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
-# Adım 2: Gerekli düzenlemeleri yapınız. (Tip hatası olan değişkenler gibi)
+# Data Type Corrections
 
-# 1. TotalCharges sütununu sayısala çevirme (Tip Düzeltmesi)
 df["TOTALCHARGES"] = pd.to_numeric(df["TOTALCHARGES"], errors="coerce")
 
-# 2. SeniorCitizen sütununu kategorik yapma (Kategori Düzeltmesi)
 df["SENIORCITIZEN"] = df["SENIORCITIZEN"].astype("object")
 
-# Adım 3: Numerik ve kategorik değişkenlerin veri içindeki dağılımını gözlemleyiniz.
+# Variable Distribution Analysis
 
 def cat_summary(dataframe, col_name, plot=False):
     print(pd.DataFrame({col_name: dataframe[col_name].value_counts(),
@@ -150,7 +152,7 @@ def num_summary(dataframe, numerical_col, plot=False):
 for col in num_cols:
     num_summary(df, col, plot=True)
 
-# Adım 4: Kategorik değişkenler ile hedef değişken incelemesini yapınız.
+# Target Variable Analysis
 
 def target_summary_with_num(dataframe, target, numerical_col):
     print(dataframe.groupby(target).agg({numerical_col: "mean"}), end="\n\n\n")
@@ -170,7 +172,7 @@ for col in cat_cols:
     target_summary_with_cat(df, "CHURN", col)
 
 
-# Adım 5: Aykırı gözlem var mı inceleyiniz.
+# Outlier Analysis
 
 def outlier_thresholds(dataframe, col_name, q1=0.10, q3=0.90):
     """Sayısal değişken için IQR yöntemine göre alt ve üst eşik değerleri hesaplar."""
@@ -193,7 +195,7 @@ def check_outlier(dataframe, col_name):
 for col in num_cols:
     print(col, check_outlier(df, col))
 
-# Adım 6: Eksik gözlem var mı inceleyiniz.
+# Missing Value Analysis
 
 def missing_values_table(dataframe, na_name=False):
     """Eksik verilerin sayısını ve oransal dağılımını tablo olarak verir."""
@@ -211,15 +213,17 @@ def missing_values_table(dataframe, na_name=False):
 missing_values_table(df)
 df.head()
 
-#GÖREV 2
+# ==================================================
+# 2. Data Preprocessing and Feature Engineering
+# ==================================================
 
-# Adım 1: Eksik ve aykırı gözlemler için gerekli işlemleri yapınız.
+# Missing Value Handling
 
 df[df["TENURE"] == 0][["TENURE", "TOTALCHARGES"]]
 
 df["TOTALCHARGES"] = df["TOTALCHARGES"].fillna(0)
 
-# Adım 2: Yeni değişkenler oluşturunuz.
+# Feature Engineering
 
 df.head()
 
@@ -277,7 +281,7 @@ df["NEW_HIGH_RISK_CUSTOMER"] = np.where(
     0,
 )
 
-# Adım 3: Encoding işlemlerini gerçekleştiriniz.
+# Encoding
 
 df.head()
 df.drop("CUSTOMERID", axis=1, inplace=True)
@@ -329,14 +333,12 @@ def one_hot_encoder(dataframe, categorical_cols, drop_first=True):
     dataframe = pd.get_dummies(dataframe, columns=categorical_cols, drop_first=drop_first, dtype=int)
     return dataframe
 
-# 1. 2'den fazla sınıfa sahip kategorik sütunları seçelim:
 ohe_cols = [col for col in cat_cols if 10 >= df[col].nunique() > 2]
 
-# 2. Fonksiyonu çağırıp df'e eşitleyelim:
 df = one_hot_encoder(df, ohe_cols, drop_first=True)
 
 
-#Adım 4: Numerik değişkenler için standartlaştırma yapınız.
+# Feature Scaling
 
 df.head()
 
@@ -349,9 +351,11 @@ df[num_cols] = ss.fit_transform(df[num_cols])
 #mms = MinMaxScaler()
 #df[num_cols] = mms.fit_transform(df[num_cols])
 
-# -----------Görev 3 : Modelleme --------------------
+# ==================================================
+# 3. Model Training and Evaluation
+# ==================================================
 
-# Adım 1: Sınıflandırma algoritmaları ile modeller kurup, accuracy skorlarını inceleyip. En iyi 4 modeli seçiniz.
+# Baseline Model Comparison
 
 y = df["CHURN"]
 X = df.drop(["CHURN"], axis=1)
