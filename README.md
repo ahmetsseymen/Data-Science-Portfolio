@@ -40,4 +40,17 @@ Customer segmentation based on purchasing behavior using K-Means and Hierarchica
 
 ## Education
 
+## Education
+
+**Computer Programming**  
+Bandırma Onyedi Eylül University
+
+**Data Scientist Bootcamp**  
+Miuul
+
 ## Contact
+
+## Contact
+
+- **LinkedIn:** [Ahmet Seymen Öztürk](https://www.linkedin.com/in/ahmet-seymen-ozturk-823b3a267/)
+- **GitHub:** [ahmetsseymen](https://github.com/ahmetsseymen)
