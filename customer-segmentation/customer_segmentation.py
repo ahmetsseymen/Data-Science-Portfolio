@@ -1,3 +1,19 @@
+"""
+Customer Segmentation
+
+This project focuses on segmenting FLO customers based on their
+shopping behavior using unsupervised machine learning techniques.
+
+Main steps:
+- Data Preparation
+- Feature Engineering
+- Feature Scaling
+- K-Means Clustering
+- Elbow and Silhouette Analysis
+- Hierarchical Clustering
+- Cluster Profiling
+"""
+
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
@@ -9,7 +25,11 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
-df_ = pd.read_csv("datasets/flo_data_20k.csv")
+# ==================================================
+# 1. Data Preparation
+# ==================================================
+
+df_ = pd.read_csv("data/flo_data_20k.csv")
 df = df_.copy()
 
 def check_df(dataframe, head=5):
@@ -34,6 +54,10 @@ for col in date_cols:
     df[col] = pd.to_datetime(df[col])
 
 df.dtypes
+
+# ==================================================
+# 2. Feature Engineering
+# ==================================================
 
 analys_date = df["last_order_date"].max()
 
@@ -66,8 +90,18 @@ features = [
 
 dfC = df[features].copy()
 
+# ==================================================
+# 3. Feature Scaling
+# ==================================================
+
 scaler = StandardScaler()
 dfC[dfC.columns] = scaler.fit_transform(dfC)
+
+# ==================================================
+# 4. K-Means Clustering
+# ==================================================
+
+# Elbow Method
 
 inertia_values=[]
 
@@ -82,6 +116,8 @@ plt.ylabel("Inertia")
 plt.title("Elbow Method")
 plt.show()
 
+# Silhouette Analysis
+
 silhouette_scores = []
 for k in range(2, 11):
     model = KMeans(n_clusters=k, random_state=11)
@@ -95,6 +131,8 @@ plt.xlabel("Küme Sayısı")
 plt.ylabel("score")
 plt.title("silhouette Method")
 plt.show()
+
+# Cluster Modeling and Profiling
 
 model_2 = KMeans(n_clusters=2, random_state=11)
 cluster_2 = model_2.fit_predict(dfC)
@@ -112,7 +150,9 @@ print(df.groupby("cluster_2")[features].mean())
 print("\nK = 3")
 print(df.groupby("cluster_3")[features].mean())
 
-
+# ==================================================
+# 5. Hierarchical Clustering
+# ==================================================
 
 linkage_matrix = linkage(dfC, method="ward")
 
