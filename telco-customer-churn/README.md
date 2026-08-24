@@ -58,6 +58,23 @@ Multiple classification algorithms were trained and compared:
 
 The models were evaluated using classification performance metrics and selected models were further optimized using hyperparameter tuning.
 
+## Results
+
+Multiple classification models were evaluated using 10-fold cross-validation.
+
+| Model | Accuracy | ROC-AUC | F1 Score |
+|---|---:|---:|---:|
+| Logistic Regression | 0.8045 | 0.8473 | 0.5885 |
+| KNN | 0.7646 | 0.7810 | 0.5428 |
+| Decision Tree | 0.7295 | 0.6617 | 0.5007 |
+| Random Forest | 0.7960 | 0.8292 | 0.5636 |
+| SVM | 0.7926 | 0.8158 | 0.5172 |
+| XGBoost | 0.7840 | 0.8220 | 0.5572 |
+| LightGBM | 0.7924 | 0.8376 | 0.5667 |
+| CatBoost | 0.8004 | 0.8415 | 0.5780 |
+
+Among the baseline models, Logistic Regression achieved the highest ROC-AUC score of 0.8473 and the highest accuracy of 0.8045.
+
 ## Technologies
 
 - Python
@@ -85,20 +102,3 @@ telco-customer-churn/
 ## Objective
 
 The main objective of this project is to demonstrate an end-to-end machine learning workflow for a customer churn classification problem, including data analysis, preprocessing, feature engineering, model comparison and model optimization.
-
-## Results
-
-Multiple classification models were evaluated using 10-fold cross-validation.
-
-| Model | Accuracy | ROC-AUC | F1 Score |
-|---|---:|---:|---:|
-| Logistic Regression | 0.8045 | 0.8473 | 0.5885 |
-| KNN | 0.7646 | 0.7810 | 0.5428 |
-| Decision Tree | 0.7295 | 0.6617 | 0.5007 |
-| Random Forest | 0.7960 | 0.8292 | 0.5636 |
-| SVM | 0.7926 | 0.8158 | 0.5172 |
-| XGBoost | 0.7840 | 0.8220 | 0.5572 |
-| LightGBM | 0.7924 | 0.8376 | 0.5667 |
-| CatBoost | 0.8004 | 0.8415 | 0.5780 |
-
-Among the baseline models, Logistic Regression achieved the highest ROC-AUC score of 0.8473 and the highest accuracy of 0.8045.
