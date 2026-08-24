@@ -1,3 +1,16 @@
+"""
+Telco Customer Churn Prediction
+
+This project focuses on analyzing customer churn behavior and building
+machine learning models to predict whether a customer is likely to churn.
+
+Main steps:
+- Exploratory Data Analysis
+- Data Preprocessing
+- Feature Engineering
+- Model Training and Evaluation
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
