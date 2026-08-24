@@ -1,3 +1,21 @@
+"""
+House Price Prediction
+
+This project focuses on predicting residential house prices using machine
+learning techniques. The workflow includes exploratory data analysis,
+data preprocessing, feature engineering, model training, hyperparameter
+optimization, and prediction generation for the test dataset.
+
+Main steps:
+- Exploratory Data Analysis
+- Missing Value and Outlier Handling
+- Feature Engineering
+- Categorical Encoding
+- Model Training and Evaluation
+- Hyperparameter Optimization
+- Test Set Prediction
+"""
+
 import numpy as np
 import pandas as pd
 import warnings
