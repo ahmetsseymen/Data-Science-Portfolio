@@ -26,8 +26,8 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
 # 1. Dosyaları ayrı ayrı oku
 
-df_1 = pd.read_csv("datasets/test.csv")
-df_2 = pd.read_csv("datasets/train.csv")
+df_1 = pd.read_csv("data/test.csv")
+df_2 = pd.read_csv("data/train.csv")
 
 # 2. İki dataframe'i satır bazında birleştir
 
