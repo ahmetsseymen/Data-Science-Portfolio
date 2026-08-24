@@ -23,7 +23,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
-df_ = pd.read_csv("datasets/Telco-Customer-Churn.csv")
+df_ = pd.read_csv("data/Telco-Customer-Churn.csv")
 df = df_.copy()
 
 df.head()
