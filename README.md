@@ -16,6 +16,28 @@ I work with Python, data analysis, feature engineering, machine learning and SQL
 
 ## Projects
 
+### 1. Telco Customer Churn Prediction
+Customer churn prediction using classification algorithms, feature engineering, model comparison, and hyperparameter optimization.
+
+**Technologies:** Python, Pandas, Scikit-learn, XGBoost, LightGBM, CatBoost  
+[View Project](./telco-customer-churn)
+
+---
+
+### 2. House Price Prediction
+Residential house price prediction using feature engineering, regression models, and hyperparameter optimization.
+
+**Technologies:** Python, Pandas, Scikit-learn, LightGBM, CatBoost  
+[View Project](./house-price-prediction)
+
+---
+
+### 3. Customer Segmentation
+Customer segmentation based on purchasing behavior using K-Means and Hierarchical Clustering.
+
+**Technologies:** Python, Pandas, Scikit-learn, SciPy  
+[View Project](./customer-segmentation)
+
 ## Education
 
 ## Contact
