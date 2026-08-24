@@ -38,7 +38,6 @@ Customer segmentation based on purchasing behavior using K-Means and Hierarchica
 **Technologies:** Python, Pandas, Scikit-learn, SciPy  
 [View Project](./customer-segmentation)
 
-## Education
 
 ## Education
 
@@ -48,7 +47,6 @@ Bandırma Onyedi Eylül University
 **Data Scientist Bootcamp**  
 Miuul
 
-## Contact
 
 ## Contact
 
