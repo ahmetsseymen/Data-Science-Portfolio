@@ -20,16 +20,15 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
 
 
-# Görev 1: Keşifçi Veri Analizi (EDA)
+# ==================================================
+# 1. Exploratory Data Analysis
+# ==================================================
 
-# Adım 1: Train ve Test veri setlerini okutup birleştiriniz. Birleştirdiğiniz veri üzerinden ilerleyiniz.
-
-# 1. Dosyaları ayrı ayrı oku
+# Data Loading and Preparation
 
 df_1 = pd.read_csv("data/test.csv")
 df_2 = pd.read_csv("data/train.csv")
 
-# 2. İki dataframe'i satır bazında birleştir
 
 df_ = pd.concat([df_1, df_2], ignore_index=True)
 df =df_.copy()
@@ -54,8 +53,7 @@ check_df(df,head=5)
 df.columns = [col.upper() for col in df.columns]
 
 
-# Adım 2: Numerik ve kategorik değişkenleri yakalayınız.
-
+# Variable Type Analysis
 
 def grab_col_names(dataframe, cat_th=10, car_th=20):
     """
@@ -108,7 +106,7 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
 
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
-# Adım 3: Gerekli düzenlemeleri yapınız. (Tip hatası olan değişkenler gibi)
+# Data Type Corrections
 
 df["MSSUBCLASS"] = df["MSSUBCLASS"].astype("object")
 
@@ -117,7 +115,7 @@ cat_cols, num_cols, cat_but_car = grab_col_names(df)
 num_cols = [col for col in num_cols if col not in ["ID", "SALEPRICE"]]
 
 
-# Adım 4: Numerik ve kategorik değişkenlerin veri içindeki dağılımını gözlemleyiniz.
+# Variable Distribution Analysis
 
 def cat_summary(dataframe, col_name, plot=False):
     print(pd.DataFrame({col_name: dataframe[col_name].value_counts(dropna=False),
@@ -146,8 +144,7 @@ for col in num_cols:
     num_summary(df, col, plot=True)
 
 
-# Adım 5: Kategorik değişkenler ile hedef değişken incelemesini yapınız.
-
+# Target Variable Analysis
 
 def target_summary_with_cat(dataframe, target, categorical_col):
     print(categorical_col)
@@ -164,8 +161,7 @@ print(saleprice_corr)
 
 
 
-# Adım 6: Aykırı gözlem var mı inceleyiniz.
-
+# Outlier Analysis
 
 def outlier_thresholds(dataframe, col_name, q1=0.05, q3=0.95):
     """Sayısal değişken için IQR yöntemine göre alt ve üst eşik değerleri hesaplar."""
@@ -189,8 +185,7 @@ for col in num_cols:
     print(col, check_outlier(df, col))
 
 
-# Adım 7: Eksik gözlem var mı inceleyiniz
-
+# Missing Value Analysis
 
 def missing_values_table(dataframe, na_name=False):
     """Eksik verilerin sayısını ve oransal dağılımını tablo olarak verir."""
@@ -208,16 +203,16 @@ def missing_values_table(dataframe, na_name=False):
 missing_values_table(df)
 
 
-# Görev 2: Feature Engineering
+# ==================================================
+# 2. Data Preprocessing and Feature Engineering
+# ==================================================
 
-# Adım 1: Eksik ve aykırı gözlemler için gerekli işlemleri yapınız.
+# Missing Value and Outlier Handling
 
-# 1. İstisna olanlar DIŞINDAKİ tüm kategorik değişkenleri "None" ile doldurma
 for col in cat_cols:
     if col not in ["MSZONING", "ELECTRICAL"]:
         df[col] = df[col].fillna("None")
 
-# 2. İstisna olanları MOD (en çok tekrar eden değer) ile doldurma
 for col in ["MSZONING", "ELECTRICAL"]:
     if col in df.columns and df[col].isnull().sum() > 0:
         df[col] = df[col].fillna(df[col].mode()[0])
@@ -227,7 +222,6 @@ zero_cols = ["BSMTFINSF1", "BSMTFINSF2", "BSMTUNFSF", "TOTALBSMTSF", "GARAGEAREA
 for col in zero_cols:
     df[col] = df[col].fillna(0)
 
-# 1. Garaj yılı boş olanlara evin inşa yılını atama
 df["GARAGEYRBLT"] = df["GARAGEYRBLT"].fillna(df["YEARBUILT"])
 
 df["LOTFRONTAGE"] = df.groupby("NEIGHBORHOOD")["LOTFRONTAGE"].transform(lambda x: x.fillna(x.median()))
@@ -259,19 +253,15 @@ for col in num_cols:
     print(col, check_outlier(df, col))
 
 
-# Adım 3: Yeni değişkenler oluşturunuz. (ufak bi değişiklik yapalım slayta göre gitmedim burada)
-
+# Feature Engineering
 df.columns
 
-# 1. Bahçe alanı
 df["NEW_GARDEN_AREA"] = df["LOTAREA"] - df["1STFLRSF"]
 
-# Garajı müstakil olanları düş
 mask = df["GARAGETYPE"] == "Detchd"
 df.loc[mask, "NEW_GARDEN_AREA"] = df.loc[mask, "NEW_GARDEN_AREA"] - df.loc[mask, "GARAGEAREA"]
 df["NEW_GARDEN_AREA"] = df["NEW_GARDEN_AREA"].clip(lower=0)
 
-# 2. Sundurma ve Bahçe Oranları (+1 sıfıra bölünmeyi engeller)
 df["NEW_OPENPORCHSF_NEW_GARDEN_AREA_RATIO"] = df["OPENPORCHSF"] / (df["NEW_GARDEN_AREA"] + 1)
 df["NEW_ENCLOSEDPORCH_NEW_GARDEN_AREA_RATIO"] = df["ENCLOSEDPORCH"] / (df["NEW_GARDEN_AREA"] + 1)
 
@@ -281,25 +271,18 @@ df["NEW_ALLPORCH_NEW_GARDEN_AREA_RATIO"] = df["NEW_ALLPORCH"] / (df["NEW_GARDEN_
 df["NEW_GARDEN_AREA_LOTAREA_RATIO"] = df["NEW_GARDEN_AREA"] / df["LOTAREA"]
 df["NEW_POOLAREA_NEW_GARDEN_AREA_RATIO"] = df["POOLAREA"] / (df["NEW_GARDEN_AREA"] + 1)
 
-# 3. Toplam Sosyal Alan ve Oranları (Düzeltilen Kısım)
 df["NEW_ALL_SOCIAL_AREA"] = df["POOLAREA"] + df["ENCLOSEDPORCH"] + df["OPENPORCHSF"] + df["WOODDECKSF"]
 
-# İki ayrı isimle iki ayrı oran alıyoruz:
 df["NEW_ALL_SOCIAL_AREA_GARDEN_RATIO"] = df["NEW_ALL_SOCIAL_AREA"] / (df["NEW_GARDEN_AREA"] + 1)
 df["NEW_ALL_SOCIAL_AREA_LOTAREA_RATIO"] = df["NEW_ALL_SOCIAL_AREA"] / df["LOTAREA"]
 
-# 4. Yaş ve Segmentler
 df["NEW_HOUSE_AGE"] = df["YRSOLD"] - df["YEARBUILT"]
 
 df.loc[(df["NEW_HOUSE_AGE"] >= 0) & (df["NEW_HOUSE_AGE"] <= 5), "NEW_HOUSE_SEGMENT"] = "NEW"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10), "NEW_HOUSE_SEGMENT"] = "NORMAL"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11), "NEW_HOUSE_SEGMENT"] = "OLD"
 
-# ==========================================
-# 5. YÜKSEK / ORTA / DÜŞÜK KALİTELİ EV RİSK MATRİSİ
-# ==========================================
 
-# 1. Yüksek Kalite (OVERALLQUAL >= 7)
 df.loc[(df["NEW_HOUSE_AGE"] <= 5) & (df["OVERALLQUAL"] >= 7) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "PERFECT"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10) & (df["OVERALLQUAL"] >= 7) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "VERY_GOOD"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11) & (df["OVERALLQUAL"] >= 7) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "GOOD_CONDITION"
@@ -312,7 +295,6 @@ df.loc[(df["NEW_HOUSE_AGE"] <= 5) & (df["OVERALLQUAL"] >= 7) & (df["OVERALLCOND"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10) & (df["OVERALLQUAL"] >= 7) & (df["OVERALLCOND"] <= 3), "NEW_HOUSE_RISK_CONTROL"] = "NEED_REPAIR"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11) & (df["OVERALLQUAL"] >= 7) & (df["OVERALLCOND"] <= 3), "NEW_HOUSE_RISK_CONTROL"] = "HIGH_REPAIR_COST"
 
-# 2. Orta Kalite (OVERALLQUAL 4-6)
 df.loc[(df["NEW_HOUSE_AGE"] <= 5) & (df["OVERALLQUAL"] >= 4) & (df["OVERALLQUAL"] <= 6) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "GOOD_CONDITION"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10) & (df["OVERALLQUAL"] >= 4) & (df["OVERALLQUAL"] <= 6) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "GOOD_CONDITION"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11) & (df["OVERALLQUAL"] >= 4) & (df["OVERALLQUAL"] <= 6) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "MODERATE_RISK"
@@ -321,7 +303,6 @@ df.loc[(df["NEW_HOUSE_AGE"] <= 5) & (df["OVERALLQUAL"] >= 4) & (df["OVERALLQUAL"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10) & (df["OVERALLQUAL"] >= 4) & (df["OVERALLQUAL"] <= 6) & (df["OVERALLCOND"] >= 4) & (df["OVERALLCOND"] <= 6), "NEW_HOUSE_RISK_CONTROL"] = "MODERATE_RISK"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11) & (df["OVERALLQUAL"] >= 4) & (df["OVERALLQUAL"] <= 6) & (df["OVERALLCOND"] >= 4) & (df["OVERALLCOND"] <= 6), "NEW_HOUSE_RISK_CONTROL"] = "NEED_REPAIR"
 
-# 3. Düşük Kalite (OVERALLQUAL <= 3)
 df.loc[(df["NEW_HOUSE_AGE"] <= 5) & (df["OVERALLQUAL"] <= 3) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "MODERATE_RISK"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10) & (df["OVERALLQUAL"] <= 3) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "NEED_REPAIR"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11) & (df["OVERALLQUAL"] <= 3) & (df["OVERALLCOND"] >= 7), "NEW_HOUSE_RISK_CONTROL"] = "NEED_REPAIR"
@@ -334,37 +315,27 @@ df.loc[(df["NEW_HOUSE_AGE"] <= 5) & (df["OVERALLQUAL"] <= 3) & (df["OVERALLCOND"
 df.loc[(df["NEW_HOUSE_AGE"] >= 6) & (df["NEW_HOUSE_AGE"] <= 10) & (df["OVERALLQUAL"] <= 3) & (df["OVERALLCOND"] <= 3), "NEW_HOUSE_RISK_CONTROL"] = "HIGH_RISK"
 df.loc[(df["NEW_HOUSE_AGE"] >= 11) & (df["OVERALLQUAL"] <= 3) & (df["OVERALLCOND"] <= 3), "NEW_HOUSE_RISK_CONTROL"] = "CRITICAL_RISK"
 
-# Kontrol
 df["NEW_HOUSE_RISK_CONTROL"].value_counts(dropna=False)
 
-# Bodrum kullanılabilir/işlenmiş alan oranının hesaplanması
 df["NEW_BSMT_FIN_RATIO"] = (df["BSMTFINSF1"] + df["BSMTFINSF2"]) / (df["TOTALBSMTSF"] + 1)
 
-# Bodrumu hiç olmayan (TOTALBSMTSF == 0) evlerde oranı doğrudan 0'a sabitliyoruz
 df.loc[df["TOTALBSMTSF"] == 0, "NEW_BSMT_FIN_RATIO"] = 0
 
-# Satış anında tadilatın üzerinden geçen yıl sayısı
 df["NEW_YEARS_SINCE_REMOD"] = df["YRSOLD"] - df["YEARREMODADD"]
 
-# Tadilat geçmişine göre segmentasyon
 df.loc[df["NEW_YEARS_SINCE_REMOD"] <= 1, "NEW_REMOD_SEGMENT"] = "RECENT"
 df.loc[(df["NEW_YEARS_SINCE_REMOD"] > 1) & (df["NEW_YEARS_SINCE_REMOD"] <= 5), "NEW_REMOD_SEGMENT"] = "MID_RECENT"
 df.loc[(df["NEW_YEARS_SINCE_REMOD"] > 5) & (df["NEW_YEARS_SINCE_REMOD"] <= 10), "NEW_REMOD_SEGMENT"] = "OLD_REMOD"
 df.loc[df["NEW_YEARS_SINCE_REMOD"] > 10, "NEW_REMOD_SEGMENT"] = "VERY_OLD_REMOD"
 
-# 11. Zemin üstü yatak odası / Zemin üstü toplam oda oranı
 df["NEW_BEDROOM_RATIO"] = df["BEDROOMABVGR"] / (df["TOTRMSABVGRD"] + 1)
 
-# 12. Zemin üstü toplam banyo/tuvalet sayısı (Yarım banyolar 0.5 ile çarpılır)
 df["NEW_TOTAL_BATH_ABVGR"] = df["FULLBATH"] + (df["HALFBATH"] * 0.5)
 
-# 13. Zemin üstü banyo / Zemin üstü toplam oda oranı
 df["NEW_BATH_RATIO_ABVGR"] = df["NEW_TOTAL_BATH_ABVGR"] / (df["TOTRMSABVGRD"] + 1)
 
-# 15. Mutfak sayısının toplam odaya oranı
 df["NEW_KITCHEN_RATIO"] = df["KITCHENABVGR"] / (df["TOTRMSABVGRD"] + 1)
 
-# 16. Şömine sayısının toplam odaya oranı
 df["NEW_FIREPLACE_RATIO"] = df["FIREPLACES"] / (df["TOTRMSABVGRD"] + 1)
 
 
@@ -373,13 +344,12 @@ cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
 
 
-# Adım 2: Rare Encoder uygulayınız
+# step 2: Rare Encoder 
 
 def rare_analyser(dataframe, target, cat_cols):
     for col in cat_cols:
         print(col, ":", len(dataframe[col].value_counts()))
 
-        # İndeksleri oluştuğu anda str yapıyoruz ki pd.DataFrame hizalarken tipler karışmasın
         counts = dataframe[col].value_counts()
         counts.index = counts.index.astype(str)
 
@@ -389,7 +359,6 @@ def rare_analyser(dataframe, target, cat_cols):
         target_means = dataframe.groupby(col, observed=False)[target].mean()
         target_means.index = target_means.index.astype(str)
 
-        # Artık sorunsuz birleştirir
         res = pd.concat([counts, ratios, target_means], axis=1)
         res.columns = ["COUNT", "RATIO", "TARGET_MEAN"]
 
@@ -401,19 +370,15 @@ rare_analyser(df, "SALEPRICE", cat_cols)
 def rare_encoder(dataframe, rare_perc, cat_cols, protected_labels=["None"]):
     temp_df = dataframe.copy()
 
-    # Sadece belirlenen kategorik sütunlarda işlem yapıyoruz
     rare_columns = [col for col in cat_cols if (temp_df[col].value_counts(normalize=True) < rare_perc).any()]
 
     for var in rare_columns:
         tmp = temp_df[var].value_counts(normalize=True)
 
-        # Rare oranının altında kalan etiketleri buluyoruz
         rare_labels = tmp[tmp < rare_perc].index.tolist()
 
-        # ⚠️ KRİTİK NOKTA: Korunması gereken etiketleri ("None", "No" vb.) rare_labels listesinden çıkarıyoruz!
         rare_labels = [label for label in rare_labels if str(label) not in protected_labels]
 
-        # Eğer geriye dönüştürülecek etiketi kaldıysa birleştirme yapıyoruz
         if len(rare_labels) > 0:
             temp_df[var] = np.where(temp_df[var].isin(rare_labels), 'Rare', temp_df[var])
 
@@ -422,56 +387,43 @@ def rare_encoder(dataframe, rare_perc, cat_cols, protected_labels=["None"]):
 df = rare_encoder(df, 0.01, cat_cols, protected_labels=["None"])
 
 
-# Adım 4: Encoding işlemlerini gerçekleştiriniz
 
 
-# 1. Label Encoder Fonksiyonu
 def label_encoder(dataframe, binary_col):
     """2 sınıflı kategorik değişkeni 0 ve 1 olarak dönüştürür."""
     labelencoder = LabelEncoder()
     dataframe[binary_col] = labelencoder.fit_transform(dataframe[binary_col].astype(str))
     return dataframe
 
-# Binary sütunları seçip DÖNGÜYÜ TAMAMLIYORUZ:
 binary_cols = [col for col in cat_cols if df[col].nunique(dropna=False) == 2]
 
 for col in binary_cols:
     label_encoder(df, col)
 
 
-# 2. One-Hot Encoder Fonksiyonu
 def one_hot_encoder(dataframe, categorical_cols, drop_first=True):
     """Kategorik değişkenler için One-Hot Encoding uygular."""
     dataframe = pd.get_dummies(dataframe, columns=categorical_cols, drop_first=drop_first, dtype=int)
     return dataframe
 
-# 1. 2'den fazla sınıfa sahip tüm kategorik VE kardinal sütunları seçiyoruz:
-# (cat_cols + cat_but_car birleşimi sayesinde NEIGHBORHOOD vb. kaçamaz)
 ohe_cols = [col for col in (cat_cols + cat_but_car) if df[col].nunique(dropna=False) > 2]
 
-# 2. OHE uyguluyoruz:
 df = one_hot_encoder(df, ohe_cols, drop_first=True)
 
-# 3. Kontrol:
 df.head()
 
+# ==================================================
+# 3. Model Training and Evaluation
+# ==================================================
 
-# Görev 3
+# Train-Test Separation and Target Transformation
 
-# Adım 1: Train ve Test verisini ayırınız. (SalePrice değişkeni boş olan değerler test verisidir.)
-
-# ==============================================================================
-# 1. TRAIN / TEST AYRIMI VE LOG DÖNÜŞÜMÜ
-# ==============================================================================
-
-# SALEPRICE dolu olanlar Train, boş olanlar Test verisidir
 train_df = df[df['SALEPRICE'].notna()].copy()
 test_df = df[df['SALEPRICE'].isna()].copy()
 
 X = train_df.drop(["SALEPRICE", "ID"], axis=1, errors="ignore")
 y = train_df["SALEPRICE"]
 
-# Log Dönüşümü (RMSE performansını ciddi oranda artırır)
 y_log = np.log1p(y)
 
 test_id = test_df["ID"]
