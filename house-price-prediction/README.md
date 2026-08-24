@@ -78,6 +78,10 @@ The optimized models achieved the following cross-validation results:
 
 Among the evaluated optimized models, CatBoost achieved the lower RMSE score.
 
+### Kaggle Result
+
+The final CatBoost model achieved a Kaggle competition submission score of **0.12548**.
+
 ## Test Set Prediction
 
 The final model was used to generate predictions for the test dataset. The predicted house prices were transformed back to their original scale and prepared in the required submission format.
