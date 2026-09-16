@@ -38,6 +38,14 @@ Customer segmentation based on purchasing behavior using K-Means and Hierarchica
 **Technologies:** Python, Pandas, Scikit-learn, SciPy  
 [View Project](./customer-segmentation)
 
+---
+
+### 4. Flight Delay Prediction
+U.S. domestic flight arrival deviation prediction comparing a direct regression approach with a component-based approach that separately models departure deviation and elapsed-time deviation. Origin and destination weather features were integrated for the final hour before scheduled departure.
+
+**Technologies:** Python, Pandas, NumPy, Scikit-learn, XGBoost, LightGBM, CatBoost, Open-Meteo API  
+[View Project](./flight-delay-prediction)
+
 
 ## Education
 
