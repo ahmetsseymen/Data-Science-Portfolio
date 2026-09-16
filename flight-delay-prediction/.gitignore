@@ -1,0 +1,72 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# =========================
+# Virtual Environments
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# Conda
+# =========================
+.conda/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# IDE / Editor
+# =========================
+.idea/
+.vscode/
+
+# =========================
+# Environment Variables / Secrets
+# =========================
+.env
+*.env
+
+# =========================
+# Data
+# Large datasets should not be pushed to GitHub
+# =========================
+data/raw/*
+data/interim/*
+data/processed/*
+data/external/*
+
+# =========================
+# Trained Models
+# =========================
+models/*
+
+# =========================
+# Generated Reports / Figures
+# =========================
+reports/figures/*
+
+# =========================
+# CatBoost Temporary Files
+# =========================
+catboost_info/
+**/catboost_info/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS Generated Files
+# =========================
+.DS_Store
+Thumbs.db
